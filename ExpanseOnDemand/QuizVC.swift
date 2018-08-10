@@ -7,20 +7,36 @@
 //
 
 import UIKit
-
+import CoreData
 class QuizVC: BaseViewController {
     @IBOutlet weak var quizTBL: UITableView!
     var screenType = screenTypeQuiz
     let utility = Utility()
-    var DataARR = CommonModel.sharedInstance.QuizArr
+    let manager = CoreDataManager()
+
+   // var DataARR = CommonModel.sharedInstance.QuizArr
+    var DataARR: [NSManagedObject] = []
+
     override func viewDidLoad() {
         super.viewDidLoad()
 //       self.title
+        manager.GetData(inputArr: &DataARR)
+        if DataARR.count==0 {
+            manager.saveData()
+            manager.GetData(inputArr: &DataARR)
+
+        }
+        
         quizTBL.delegate=self
         quizTBL.dataSource=self
         // Do any additional setup after loading the view.
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+   }
 
+  
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -50,28 +66,30 @@ class QuizVC: BaseViewController {
                 return
             }
             let cell = tableView.cellForRow(at: indexPath) as! QuizCell
-            DataARR[indexPath.section][userAnswer]=cell.answerLBL.text
             
-            CommonModel.sharedInstance.QuizArr=DataARR
-            // print(DataARR[indexPath.section])
-            //  print(CommonModel.sharedInstance.QuizArr)
-            self.quizTBL.reloadData()
+            manager.updateDataInCoreData(question: DataARR[indexPath.section], answer: cell.answerLBL.text!)
+            manager.GetData(inputArr: &DataARR)
+          self.quizTBL.reloadData()
         }
         
         
         func numberOfSections(in tableView: UITableView) -> Int {
-            return 5
+            return DataARR.count
         }
         func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
             return rowHeight
         }
         func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-            let answerArr  = DataARR[section][answerList] as! [[String : Any]]
+            let question = DataARR[section]
+            
+            let answerStr =  String(describing:question.value(forKeyPath: answerList)!)
+            let answerArr = answerStr.components(separatedBy: ",")
+            
             return answerArr.count
         }
         func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-            //  print(section)
-            return "Question: " + String(describing: DataARR[section][questionText]!)
+            let question = DataARR[section]
+            return headerQuestion + String(describing: question.value(forKeyPath: questionText)!)
         }
         func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
             // print(section)
@@ -81,27 +99,32 @@ class QuizVC: BaseViewController {
             }
             else
             {
-                return "Answer: " + String(describing: DataARR[section][answer]!)
+                let question = DataARR[section]
+                return footerAnswer + String(describing: question.value(forKeyPath: answer)!)
             }
         }
         func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
             let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! QuizCell
             cell.selectionStyle = .none
-            let answerArr  = DataARR[indexPath.section][answerList] as! [[String : Any]]
-            cell.answerLBL.text = String(describing:  answerArr[indexPath.row][answerText]!)
-            if String(describing: DataARR[indexPath.section][userAnswer]!) == String(describing:  answerArr[indexPath.row][answerText]!) {
+            
+            let question = DataARR[indexPath.section]
+            
+            let answerStr =  String(describing:question.value(forKeyPath: answerList)!)
+            let answerArr = answerStr.components(separatedBy: ",")
+            cell.answerLBL.text = String(describing:  answerArr[indexPath.row])
+            if String(describing:question.value(forKeyPath: userAnswer)!) == String(describing:  answerArr[indexPath.row]) {
                 cell.answerSelectionIMG.backgroundColor = .green
             }
             else
             {
                 cell.answerSelectionIMG.backgroundColor = .gray
             }
-            let questionDict = DataARR[indexPath.section]
+
            // show right or wrong answer
-            if screenType == screenTypeScore && cell.answerLBL.text == String(describing: questionDict[userAnswer]!)
+            if screenType == screenTypeScore && cell.answerLBL.text == String(describing:question.value(forKeyPath: userAnswer)!)
             {
-                
-                if String(describing: questionDict[userAnswer]!) == String(describing: questionDict[answer]!)
+
+                if String(describing:question.value(forKeyPath: userAnswer)!) == String(describing:question.value(forKeyPath: answer)!)
                 {
                     cell.backgroundColor = .green
                 }

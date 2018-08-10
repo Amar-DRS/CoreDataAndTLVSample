@@ -9,13 +9,17 @@
 import UIKit
 
 class ViewController: BaseViewController {
-    
+  let  utility = Utility()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-         CommonModel.sharedInstance.QuizArr = DummyData.getDummyDataForQuestionAnswerList()
         // Do any additional setup after loading the view, typically from a nib.
     }
 
+    @IBAction func taskSecondBTNAction(_ sender: Any) {
+        utility.getSubstringFromString()
+
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

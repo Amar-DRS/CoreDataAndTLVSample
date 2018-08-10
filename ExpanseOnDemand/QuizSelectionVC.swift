@@ -9,11 +9,9 @@
 import UIKit
 
 class QuizSelectionVC: BaseViewController {
-    let utility = Utility()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        utility.getSubstringFromString()
         // Do any additional setup after loading the view.
     }
 
