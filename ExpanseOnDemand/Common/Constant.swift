@@ -10,12 +10,11 @@ import Foundation
 import CoreGraphics
 
     public let quizEntity              = "Quiz"
-    public let questionText            = "questionText"
-    public let answerList              = "answerList"
+    public let questionText            = "question"
+    public let answerList              = "answers"
     public let answer                  = "answer"
     public let userAnswer              = "userAnswer"
     public let answerId                = "answerId"
-    public let answerText              = "answerText"
     public let screenTypeScore         = "screenTypeScore"
     public let screenTypeQuiz          = "screenTypeQuiz"
     public let cellIdentifier          = "QuizCell"
@@ -30,4 +29,6 @@ import CoreGraphics
     public let tagKey                   = "Tag"
     public let valueKey                 = "Value"
     public let valueLengthKey           = "Length"
+    public let headerQuestion           = "Question"
+    public let footerAnswer             = "Answer"
 

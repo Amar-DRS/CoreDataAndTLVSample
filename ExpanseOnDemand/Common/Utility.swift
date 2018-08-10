@@ -75,13 +75,11 @@ class Utility: NSObject {
         while TLVTagString.count>0 {
             let resultTagTuple = getTagAndValueFromString(inputString: TLVTagString, isSubTag: false)
             
-           // print(resultTagTuple)
             if resultTagTuple.tagvalue.hasPrefix("0") && resultTagTuple.tagvalue.count>5
                {
                 TLVSubTagString = resultTagTuple.tagvalue
                 while TLVSubTagString.count>0 {
                     _ =   getTagAndValueFromString(inputString: TLVSubTagString, isSubTag: true)
-                  //  print(resultSubTagTuple)
 
                 }
         }
@@ -143,6 +141,7 @@ class Utility: NSObject {
             TLVSubTagString.replaceSubrange(range!, with: "")
 
         }
+       // print(TagDict)
         TagArr.append(TagDict)
         return (String(tagSubstring),valueLength!,String(tagValue))
     }
